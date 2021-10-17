@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type='text/css' rel='stylesheet' href='https://codding.in/cssFiles/kub-skaff.css' />
+    <title>Setup Kubernetes and Skaffold in your local system.</title>
+</head>
+
+<body>
+    <div class='restrict'>
+        <nav style='margin: auto; max-width: 80%; text-align: center; font-size: 1.4rem; padding: 3rem;'>
+            <span>Note :</span> This is just a static site. Visit the original site at <a
+                style='text-decoration: none;text-decoration-color: none;'
+                href='https://codding.in'>https://codding.in/</a>
+        </nav>
+        <header class="header-kubSkaff">
+            Setup Kubernetes and Skaffold
+            <button class='header-kubSkaff_btn'>
+                <a class='header-kubSkaff_link' href="#install">
+                    Install &#8594;
+                </a>
+            </button>
+        </header>
+        <main class='main-kubSkaff'>
+            <div class='main-kubSkaff_about'>
+                <h2 class='main-kubSkaff_h2'>
+                    About Kubernets
+                </h2>
+                <p>
+                    Unlike in our Docker blog there are no tons of paragraphs to know about Kubernetes. Kubernetes
+                    simply exists to make it easier to organise developers application across a different number of
+                    computers. In Kubernetes Cluster we refer to these computers as <strong>Nodes.</strong> Each Node
+                    contains number of virtual machines which and each virtual machine has on an average of 4 - 6 vCPU's
+                    (Virtual CPU). Each VM has it's own vCPU's and memory.
+                </p>
+                <br>
+                <p>
+                    So as we discussed in Docker Blog each container is pushed into these Nodes. I think now you have a
+                    clear understanding of how this works. If you did Great ! It's fine even if you didn't understand it
+                    at all. We are gonna talk about all these a lot in future blogs. I mean we just started right. There
+                    is a long way to go and lot to learn.
+                </p>
+            </div>
+            <div class='main-kubSkaff_about'>
+                <h2 class="main-kubSkaff_h2">
+                    About Skaffold
+                </h2>
+                <p>
+                    Now this is important. Even though I mentioned that kubernetes eases the process of running
+                    application on different Nodes, it's still a nightmare to take care of it. Many developers choose to
+                    avoid and just deploy their application without kubernetes. That's where Skaffold comes in. Once you
+                    deploy your application to Kubernetes Cluster via Github Pull Request you don't need to use any
+                    commands to get it up and running on the cluster. Skaffold files takes care of that and it's easy to
+                    write Skaffold
+                    (.yaml)
+                    files too. Just do the hard stuff once before deployment and the next time revise your application
+                    how many ever times without issuing a single command ever again. That's the power of Skaffold.
+                </p>
+            </div>
+            <div id='install' class='main-kubSkaff_about'>
+                <h2 class='main-kubSkaff_h2'>
+                    Installation
+                </h2>
+                <h3 class='main-kubSkaff_h3'>
+                    Kubernetes.
+                </h3>
+                <p>
+                    <strong>
+                        Now for those of you who read my docker blog. You can run kubernetes on your local system with
+                        just 2 steps.
+                    </strong>
+                    <br>
+                    For those of you who didn't read my docker blog yet. I recommend to install and set up docker on
+                    your system. You can check my docker blog if you have any doubts.
+                    <br>
+                    Open up your docker desktop application,
+                    >>> Click on the settings logo you see on the top right hand side.
+                    <br>
+                    >>> Click on the kubernetes options appeared on the left side of your screen.
+                    <br>
+                    >>> Now enable Kubernetes. That's all.
+                </p>
+                <p>
+                    For Skaffold the following.
+                    <br>
+                    Paste the following command in your terminals according to your system requirements mentioned.
+                    <br>
+                    For those who have:
+                    <br>
+                    Apple silicon m1
+                <pre class='code'>
+
+curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-darwin-amd64 
+&& \ sudo install skaffold /usr/local/bin/
+                                </pre>
+                <br>
+                <p>Apple Intel</p>
+                <pre class='code'>
+
+curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-darwin-amd64 
+&& \ sudo install skaffold /usr/local/bin/
+                                </pre>
+                </p>
+                <p>For Windows</p>
+                <p>Type the below command in your cmd prompt
+                    <br>
+                    <br>
+                    >>> scoop install skaffold
+                    <br>
+                <p>Or</p>
+                <p>>>> choco install -y skaffold</p>
+                </p>
+                <br>
+                <p>For Linux</p>
+                <pre class='code'>
+<code>
+<span>#For Linux x86_64</span>
+<span>curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-arm64
+     && \
+sudo install skaffold /usr/local/bin/</span>
+</code></pre>
+                <pre class='code'><code><span>#For Linux arm64</span>
+<span>curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-arm64 
+    && \
+sudo install skaffold /usr/local/bin/</span>
+</code></pre>
+            </div>
+        </main>
+        <footer class='footer'>
+            <p>
+                That's all for now folks. I pretty much think you shouldn't have faced any error. Skaffold maintains
+                itself
+                so
+                uniquely that almost no one has ever had installation error.
+            </p>
+            <div class='nextBlog'>
+                <h4>
+                    Sayonara! See you in my next blog.
+                </h4>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>

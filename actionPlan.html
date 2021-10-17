@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Action Plan for Microservices app</title>
+  <link rel="stylesheet" href="https://codding.in/cssFiles/actionPlan.css" type='text/css'>
+</head>
+
+<body>
+  <div class="restrict">
+    <nav style='margin: auto; max-width: 80%; text-align: center; font-size: 1.4rem; padding: 3rem;'>
+      <span>Note :</span> This is just a static site. Visit the original site at <a
+        style='text-decoration: none;text-decoration-color: none;' href='https://codding.in'>https://codding.in/</a>
+    </nav>
+    <header class="header-actionPlan">
+      <h1>
+        Let's create one
+      </h1>
+      <button class='header-actionPlan_button'>
+        <a href="#main"></a>
+        Start &#8594;
+      </button>
+    </header>
+    <main id='main' class='main-actionPlan'>
+      <div class='main-actionPlan_about'>
+        <h2>
+          Why do we need an Action Plan
+        </h2>
+        <p>
+          Our goal is to build an insanely huge app using TypeScript NodeJs, MongoDB, Nats Streaming Server and Next Js
+          for server side rendering. Next Js is exactly the same as react Js. Next Js is only better because it provides
+          better API interaction and server side rendering which microservice app need. <strong>
+            You can learn Next Js in 2 Mins.
+          </strong>
+          That's right 2 minutes.
+        </p>
+        <p>Search for Next Js Blog Course in this website. The read time is less than 2 minutes and you can master
+          server side rendering react Js Framework in matter of seconds.</p>
+        <p>
+          Typescript is also no different than Javascript. I know there 10 - 20 hrs of courses on learning Typescript
+          but they are useless. They won't teach you anything related to what we are gonna build. We will learn
+          Typescript as we build our app. It's gonna be easy. Trust me.
+        </p>
+        <p>
+          As I mentioned in the docker blog we are gonna build our first app without kubernetes or docker. So we know
+          the difference and grasp a better idea around docker, kubernetes and skaffold. If I directly jump into
+          building microservice web apps with Kubernetes you guys are gonna be lost and will definitely hate me for it.
+        </p>
+        <p>I don't want anyone to think that microservice apps are hard to build. Kubernetes + Microservices web apps
+          are future. In future no ones gonna build a website without using kubernetes. <strong>So you must be ready for
+            the
+            change</strong>.</p>
+      </div>
+      <div class='main-actionPlan_about'>
+        <h2>Details</h2>
+        <div class='main-actionPlan-h4'>
+          <h4>Our First Apps</h4>
+        </div>
+        <div class="main-actionPlan-h6">
+          <h6>
+            Post - Comment App
+          </h6>
+        </div>
+        <p>
+          Most of you might know how to create a post and comment app like Instagram. But I bet you don't know how to
+          create one with react frontend and Node Js. For this project we are not gonna use any database like SQL or
+          MongoDB. We are gonna store the data in the Backend Api itself. Building a Microservices app with MongoDB,
+          Typescript and Next Js requires a lot of knowledge. We need to understand the architecture of Microservices
+          app first and for it to be possible I can't be using all 1st class stuff like Next Js, MongoDB to build as our
+          first app. It's too heavy for you. That's the reason we will be going step by step.
+        </p>
+        <h2>Skills you will learn.</h2>
+        <p>These are the following skills which you will be learning by building our first app.</p>
+        <p><strong>Custom Event Bus</strong> - An event bus is a Api that allows our different Api's to interact without
+          one Api directly
+          interacting with other.If an API to directly communicate with other API then it will cause a lot of
+          miscommunication. Why? Let's say you are working in amazon and suddenly a Node Cluster went offline because it
+          couldn't handle so many requests. This often happens a lot in big tech companies that's the reason there are
+          <strong>'Stand By Nodes'.</strong> Now an API directly interacting with the API that just went down. Imagine
+          the problems it could cause. The API which is directly interacting with the other API will also go down
+          because it couldn't interact with the API and then many others API's which interact with these API's will go
+          down and finally the whole website will be down. You can prevent this by writing an on catch error. But is
+          that really enough though ? No Not at all. It's not enough. Communication between API's in microservices app
+          is such a huge problem that Google had to invent NATS Streaming Server. We will learning that in our 2nd app.
+        </p>
+        <p>
+          <strong>Backend Architecture</strong> - In a microservice app architecture is everything. Imagine you are
+          working for a Bank that needs Backend API for Net Banking. If you don't use the infamous architecture for it
+          and just use reading and writing Bank Balance for each customer using Database, you would be in big trouble.
+          Because Database aren't know for their availability. In a huge application clusters go down frequently and if
+          you can't write the deposited amount into the storage before the certain customer withdraw's then his money is
+          gone. Let's talk about a better example. A customer's bank account has been deposited money worth of a Million
+          Dollars and as soon as it's deposited the customer wants to withdraw it and at the crucial moment our database
+          got too many requests and has insane latency. Once our API sends the request to the Database we update our
+          client
+          whoever deposited the money as the money has been deposited but the customer when tries withdraw since our
+          Database has latency and can't update his amount then he won't be able to withdraw the money. Imagine how many
+          complaints would be filing up against the bank. <strong>Insane right ?</strong> how a small mistake could
+          damage the reputation of the bank.
+        </p>
+        <p>
+          <strong>FrontEnd and BackEnd Communication</strong> - Many people who have experience in the field of Front
+          End don't know how to deal with the communication with Backend and few don't know how to dynamically render
+          the data from API in the Front End. This will be the core of learning concept for this app.
+        </p>
+        <p>For the next app we are gonna build we are gonna learn to write <strong>Skaffold Files</strong>, <strong>Nats
+            Streaming Server</strong> and
+          <strong>MongoDB</strong>
+        </p>
+      </div>
+    </main>
+    <footer class='footer-actionPlan'>
+      <p>I think that sums up this blog. I promise the next blog will be informative than this one. You will learn a lot
+        of cool stuff.</p>
+      <div class='nextBlog'>
+        <h4>
+          Sayonara! See you in my next blog.
+        </h4>
+      </div>
+    </footer>
+  </div>
+</body>
+
+</html>

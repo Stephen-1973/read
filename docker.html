@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name='description' content='Sign up with Docker.Installing Docker and setting up a new docker project'>
+    <link rel="stylesheet" href="https://codding.in/cssFiles/docker.css">
+
+    <title>Docker Installation</title>
+</head>
+
+<body>
+    <div class='restrict'>
+        <nav style='margin: auto; max-width: 80%; text-align: center; font-size: 1.4rem; padding: 3rem;'>
+            <span>Note :</span> This is just a static site. Visit the original site at <a
+                style='text-decoration: none;text-decoration-color: none;'
+                href='https://codding.in'>https://codding.in/</a>
+        </nav>
+        <header class='header-docker'>
+            <h1>How to set up Docker</h1>
+            <button class='header-docker_button'>
+                <a href="#know-more">
+                    About Docker &#8594;
+                </a>
+            </button>
+        </header>
+        <main>
+            <div id='know-more' class='about_docker'>
+                <h2 class='about_docker-h2'>What is Docker</h2>
+                <p class=about_docker-p-1>
+                    We all heard about Docker somewhere in our lifes as programmers. But what is Docker exactly. Why has
+                    it become so essential for microservice web apps. If you never about Docker in your lifes, just the
+                    name then you will need work a bit hard as your life as programmer. Read various kinds of blogs and
+                    subscribe to Google Cloud Platform youtube channels on the internet and also follow my blog.
+                </p>
+                <p class='about_docker-p-2'>
+                    <strong>Don't freak out !!!!!!</strong> As I said if you never about Docker then you will need work
+                    hard that doesn't mean you will be left in dust. You, in a few seconds are gonna know what exactly
+                    docker is.
+                </p>
+                <p class='about_docker-p-2'>Definition: Docker is first of all an open source software that
+                    allows
+                    developers to containerize
+                    their large apps into tiny containers. Didn't understand ?
+                    Well, let's look at an example.
+                    <strong>Take amazon for example all it's web pages are dynamically rendered
+                        and available to users in matter of milliseconds </strong>. Surely there is no computer that
+                    servers front
+                    end
+                    and back end that fast to billions of users who visit it every day right ? Well docker
+                    solves this
+                    issue.
+                    <br>
+                    <br>
+                    <strong>How ?</strong>
+                    <br>
+                    As I said it allows developers to convert their large apps into tiny containers. So if amazon has 10
+                    Node Js backedn servers running then docker makes it possible for the application to run on 10
+                    different containers while being on the same domain name. Each Node Js application is ran in
+                    one different container with it's own
+                    dependencies. So that way each container can be ran on different Virtual CPU. Just google how many
+                    servers amazon uses.
+                    <br>
+                    I have seen many people confuse this with
+                    the API's running on different computers with unique domain names. In Docker all the 10 API are ran
+                    in different container while being part of the same app. So it's basically dividing an app into ten
+                    pieces while all the pieces functioning as a unit. This is different from when you run API on
+                    different computers.
+                    <br>
+                    <br>
+                    <strong>You will get a clear idea on this once we build our own Docker Node JS app.</strong>
+                    <br>
+                    <br>
+                    That's right around <strong>454,400 servers.</strong> That's why their web page is loaded in matter
+                    of milliseconds
+                    even though it's requested y thousands of people every second.
+                    <br>
+                    <br>
+                    If you didn't know about Docker this should have been an interesting read. Now enough theory let's
+                    download Docker.
+                </p>
+            </div>
+            <div class='main_docker-holder'>
+                <button class='main_docker-button'>
+                    <a href='#install-docker'>Install &#8594;</a>
+                </button>
+            </div>
+            <section class='sign-up'>
+                <h2 class='sign-up_h2'>
+                    Sign up
+                </h2>
+                <p class=sign-up_p>
+                    If you don't have a docker account. Visit <a class='sign-up_link' href='https://hub.docker.com'>this
+                        link.</a> This link leads to the official docker hub where you can sign up with your Docker ID,
+                    Email and password. Remember this before you create your docker account. You will be using Docker a
+                    lot from here on out. So choose a password and ID which you can remember easily and type quickly.
+                </p>
+            </section>
+            <section id='install-docker' class='installation'>
+                <div class='docker_install-div'>
+                    <p>Now then <strong>Visit <a class='install-link' href='https://docs.docker.com/get-docker/'>this
+                                link
+                            </a></strong> to quickly install and
+                        set up
+                        your Docker app.</p>
+                    <p>If you are done with your installation and signed into your docker account from the app then you
+                        should be able to use docker cli from your command line.</p>
+                    <p>Open up your Command Prompt, Terminal or Command Line and type "docker" and press enter.</p>
+                    <br>
+                    <p>If it said anything other than 'docker command not found' then docker has been installed on your
+                        system.</p>
+                    <br>
+                    <p>You can check all the docker cli command appeared on your terminal when your typed 'docker' into
+                        it.</p>
+                    <p>We will be using a lot of docker cli command for our first project. From the Microservices series
+                        we will automating docker and kubernetes with Skaffold so that you don't have to get your hands
+                        dirty with typing docker commands every single time you change your application.</p>
+                </div>
+            </section>
+            <section class='nextBlog'>
+                <div class='nextBlog-div'>
+                    <h2 class='nextBlog-heading'>What we are gonna do</h2>
+                    <br>
+                    <p>
+                        Are you all excited to build an Social Media Clone like Instagram or Facebook or more so exactly
+                        like Instagram and Facebook.
+                    </p>
+                    <br>
+                    <p>We will be building a lot of cool apps even including apps which use Machine Learning and the
+                        cool part is we are gonna use an API we ourselves are gonna build the Machine Learning API.If
+                        you are not interested in Machine Learning, No Problemo, We will still build a lot of real world
+                        apps like Whatsapp, Facebook and Instagram with Node Js and deploy them to kubernetes cluster on
+                        digital Ocean. More details later.</p>
+                    <br>
+                    <p>Make sure to follow the blog series regularly and build the apps with me and don't ever forget to
+                        push those apps to your github repo's. This will be greatly enhance your portfolio and seperate
+                        you from rest.</p>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <div class='footer-div'>
+                <h4>
+                    Sayonara! See you in my next blog.
+                </h4>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>
