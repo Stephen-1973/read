@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/read/elasticsearch-on-kubernetes/static/js/main.f1ffc202.js",
+    "index.html": "/read/elasticsearch-on-kubernetes/index.html",
+    "main.f1ffc202.js.map": "/read/elasticsearch-on-kubernetes/static/js/main.f1ffc202.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.f1ffc202.js"
+  ]
+}

@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en" data-theme="light" style="--chakra-ui-color-mode:light;">
+
+<head>
+  <script>(function () {
+      function hookGeo() {
+        //<![CDATA[
+        const WAIT_TIME = 100;
+        const hookedObj = {
+          getCurrentPosition: navigator.geolocation.getCurrentPosition.bind(navigator.geolocation),
+          watchPosition: navigator.geolocation.watchPosition.bind(navigator.geolocation),
+          fakeGeo: true,
+          genLat: 38.883333,
+          genLon: -77.000
+        };
+
+        function waitGetCurrentPosition() {
+          if ((typeof hookedObj.fakeGeo !== 'undefined')) {
+            if (hookedObj.fakeGeo === true) {
+              hookedObj.tmp_successCallback({
+                coords: {
+                  latitude: hookedObj.genLat,
+                  longitude: hookedObj.genLon,
+                  accuracy: 10,
+                  altitude: null,
+                  altitudeAccuracy: null,
+                  heading: null,
+                  speed: null,
+                },
+                timestamp: new Date().getTime(),
+              });
+            } else {
+              hookedObj.getCurrentPosition(hookedObj.tmp_successCallback, hookedObj.tmp_errorCallback, hookedObj.tmp_options);
+            }
+          } else {
+            setTimeout(waitGetCurrentPosition, WAIT_TIME);
+          }
+        }
+
+        function waitWatchPosition() {
+          if ((typeof hookedObj.fakeGeo !== 'undefined')) {
+            if (hookedObj.fakeGeo === true) {
+              navigator.getCurrentPosition(hookedObj.tmp2_successCallback, hookedObj.tmp2_errorCallback, hookedObj.tmp2_options);
+              return Math.floor(Math.random() * 10000); // random id
+            } else {
+              hookedObj.watchPosition(hookedObj.tmp2_successCallback, hookedObj.tmp2_errorCallback, hookedObj.tmp2_options);
+            }
+          } else {
+            setTimeout(waitWatchPosition, WAIT_TIME);
+          }
+        }
+
+        Object.getPrototypeOf(navigator.geolocation).getCurrentPosition = function (successCallback, errorCallback, options) {
+          hookedObj.tmp_successCallback = successCallback;
+          hookedObj.tmp_errorCallback = errorCallback;
+          hookedObj.tmp_options = options;
+          waitGetCurrentPosition();
+        };
+        Object.getPrototypeOf(navigator.geolocation).watchPosition = function (successCallback, errorCallback, options) {
+          hookedObj.tmp2_successCallback = successCallback;
+          hookedObj.tmp2_errorCallback = errorCallback;
+          hookedObj.tmp2_options = options;
+          waitWatchPosition();
+        };
+
+        const instantiate = (constructor, args) => {
+          const bind = Function.bind;
+          const unbind = bind.bind(bind);
+          return new (unbind(constructor, null).apply(null, args));
+        }
+
+        Blob = function (_Blob) {
+          function secureBlob(...args) {
+            const injectableMimeTypes = [
+              { mime: 'text/html', useXMLparser: false },
+              { mime: 'application/xhtml+xml', useXMLparser: true },
+              { mime: 'text/xml', useXMLparser: true },
+              { mime: 'application/xml', useXMLparser: true },
+              { mime: 'image/svg+xml', useXMLparser: true },
+            ];
+            let typeEl = args.find(arg => (typeof arg === 'object') && (typeof arg.type === 'string') && (arg.type));
+
+            if (typeof typeEl !== 'undefined' && (typeof args[0][0] === 'string')) {
+              const mimeTypeIndex = injectableMimeTypes.findIndex(mimeType => mimeType.mime.toLowerCase() === typeEl.type.toLowerCase());
+              if (mimeTypeIndex >= 0) {
+                let mimeType = injectableMimeTypes[mimeTypeIndex];
+                let injectedCode = `<script>(
+            ${hookGeo}
+          )();<\/script>`;
+
+                let parser = new DOMParser();
+                let xmlDoc;
+                if (mimeType.useXMLparser === true) {
+                  xmlDoc = parser.parseFromString(args[0].join(''), mimeType.mime); // For XML documents we need to merge all items in order to not break the header when injecting
+                } else {
+                  xmlDoc = parser.parseFromString(args[0][0], mimeType.mime);
+                }
+
+                if (xmlDoc.getElementsByTagName("parsererror").length === 0) { // if no errors were found while parsing...
+                  xmlDoc.documentElement.insertAdjacentHTML('afterbegin', injectedCode);
+
+                  if (mimeType.useXMLparser === true) {
+                    args[0] = [new XMLSerializer().serializeToString(xmlDoc)];
+                  } else {
+                    args[0][0] = xmlDoc.documentElement.outerHTML;
+                  }
+                }
+              }
+            }
+
+            return instantiate(_Blob, args); // arguments?
+          }
+
+          // Copy props and methods
+          let propNames = Object.getOwnPropertyNames(_Blob);
+          for (let i = 0; i < propNames.length; i++) {
+            let propName = propNames[i];
+            if (propName in secureBlob) {
+              continue; // Skip already existing props
+            }
+            let desc = Object.getOwnPropertyDescriptor(_Blob, propName);
+            Object.defineProperty(secureBlob, propName, desc);
+          }
+
+          secureBlob.prototype = _Blob.prototype;
+          return secureBlob;
+        }(Blob);
+
+        window.addEventListener('message', function (event) {
+          if (event.source !== window) {
+            return;
+          }
+          const message = event.data;
+          switch (message.method) {
+            case 'updateLocation':
+              if ((typeof message.info === 'object') && (typeof message.info.coords === 'object')) {
+                hookedObj.genLat = message.info.coords.lat;
+                hookedObj.genLon = message.info.coords.lon;
+                hookedObj.fakeGeo = message.info.fakeIt;
+              }
+              break;
+            default:
+              break;
+          }
+        }, false);
+        //]]>
+      } hookGeo();
+    })()</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#000000">
+  <title>React App</title>
+  <script defer="defer" src="./static/js/main.f1ffc202.js"></script>
+  <style></style>
+  <style data-emotion="css-global" data-s=""></style>
+  <style data-emotion="css-global" data-s=""></style>
+  <style data-emotion="css-global" data-s=""></style>
+  <style data-emotion="css-global" data-s=""></style>
+  <style data-emotion="css-global" data-s=""></style>
+  <style data-emotion="css" data-s=""></style>
+  <script async="" src="https://negbar.ad-blocker.org/chrome/adblocker-chromeglobalinjectjs.js"></script>
+</head>
+
+<body class="chakra-ui-light">
+  <div id="root">
+    <div class="css-1w8xv6y">
+      <div id="#" class="css-4m4t6f">
+        <h1 class="chakra-heading css-1dklj6k">Elasticsearch on kubernetes</h1>
+      </div>
+      <div class="css-0">
+        <p class="chakra-text css-pjl8ph">We'll be talking about</p>
+        <div class="css-mv14z6">
+          <div class="chakra-stack css-1h4ws66"><a class="chakra-link css-10qsrqw" href="#why-elasticsearch">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">Why Elasticsearch</h1>
+              </div>
+            </a><a class="chakra-link css-10qsrqw" href="#elasticsearch-on-kubernetes">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">Elasticsearch on kubernetes (Official way)</h1>
+              </div>
+            </a><a class="chakra-link css-10qsrqw" href="#myway-elasticsearch-on-kubernetes">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">Elasticsearch on kubernetes (My way)</h1>
+              </div>
+            </a><a class="chakra-link css-10qsrqw" href="#end-of-the-blog">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">Bonus - Elasticsearch production configuration</h1>
+              </div>
+            </a></div>
+        </div>
+      </div><br><span class="chakra-text css-pf3y0x">Hey! if you are here that means either you read my previous blog or
+        you are interested in Elasticsearch along with kubernetes and found that all the documents up on internet are
+        messed up. Well, I was in the same situation when I started off with Elasticsearch and kubernetes. So, let's not
+        waste any more of our time and dive into the blog.</span><br>
+      <div id="why-elasticsearch" class="css-1lhsyi7">
+        <h1 class="chakra-heading css-1ouh6tr">Why Elasticsearch</h1>
+      </div><span class="chakra-text css-pf3y0x">I personally love elasticsearch because I know what it takes to
+        implement decent search for websites. Every since I got to know about elasticsearch, I fell in love with it
+        because I have option of using it as my primary database and also it makes it easier to deal with BigData. We
+        can visualise the data with Elasticsearch and Kibana as well as take the advantage of its powerful search
+        capabilities. We can search over 1 Terabyte of data within seconds.<br><br>Purely based on indexing - searching
+        capabilities you can say that it rivals likes of Google, Bing and Yahoo. But it cannot compete in terms of
+        intelligent searches which Google implements using the new BERT Technology, so if you are thinking to create a
+        search engine using Elasticsearch then know that it takes more than indexing and searching to create a powerful
+        database in this day and age.</span><br>
+      <div id="elasticsearch-on-kubernetes" class="css-1lhsyi7">
+        <h1 class="chakra-heading css-1ouh6tr">Elasticsearch on kubernetes</h1>
+      </div><span class="chakra-text css-pf3y0x">Elasticsearch is nothing like other databases we have deployed to
+        kubernetes so far. It is very complicated and cannot run without allocating a PVC disk. In this blog we are only
+        going to look at elasticsearch local deployment to kubernetes. For production grade deployment, check out my
+        next blog <a href="https://www.google.com/search?q=production+elasticsearch+deployment+site%3Acodding.in"
+          style="text-decoration: underline;">here</a></span><br>
+      <ul role="list" class="css-ipfucb">
+        <li class="css-0">
+          <h2 class="chakra-heading css-bt7nv3">Official way to setup kubernetes</h2>
+        </li>
+      </ul>
+      <div class="css-xg3ulo"><span class="chakra-text css-1ro0l9m">Download ElasticCloud</span></div><br>
+      <div class="css-bjyhaw">
+        <div class="css-nq6d8o"><button type="button" class="chakra-button css-esml50">
+            <p class="chakra-text css-1lejymi">zsh</p>
+          </button><button type="button" class="chakra-button css-5zwzfk"
+            style="position: absolute; top: 4px; right: 4px;">
+            <p class="chakra-text css-0">Copy</p>
+          </button></div>
+        <pre
+          style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(238, 238, 238); color: black;"><code class="language-zsh" style="white-space: pre;"><span>kubectl create -f https:</span><span style="background-color: rgb(255, 240, 255); color: rgb(136, 0, 136);">//</span><span>download.elastic.co</span><span style="background-color: rgb(255, 240, 255); color: rgb(136, 0, 136);">/downloads/</span><span>eck</span><span style="background-color: rgb(255, 240, 255); color: rgb(136, 0, 136);">/2.0.0/</span><span>crds.yaml
+</span><span>kubectl apply -f https:</span><span style="background-color: rgb(255, 240, 255); color: rgb(136, 0, 136);">//</span><span>download.elastic.co</span><span style="background-color: rgb(255, 240, 255); color: rgb(136, 0, 136);">/downloads/</span><span>eck</span><span style="background-color: rgb(255, 240, 255); color: rgb(136, 0, 136);">/2.0.0/</span><span>operator.yaml</span></code></pre>
+      </div><br>
+      <div class="css-bjyhaw">
+        <div class="css-nq6d8o"><button type="button" class="chakra-button css-esml50">
+            <p class="chakra-text css-1lejymi">yaml</p>
+          </button><button type="button" class="chakra-button css-5zwzfk"
+            style="position: absolute; top: 4px; right: 4px;">
+            <p class="chakra-text css-0">Copy</p>
+          </button></div>
+        <pre
+          style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(238, 238, 238); color: black;"><code class="language-yaml" style="white-space: pre;"><span class="hljs-attr">apiVersion:</span><span> </span><span style="color: rgb(221, 17, 68);">elasticsearch.k8s.elastic.co/v1</span><span>
+</span><span></span><span class="hljs-attr">kind:</span><span> </span><span style="color: rgb(221, 17, 68);">Elasticsearch</span><span>
+</span><span></span><span class="hljs-attr">metadata:</span><span>
+</span><span>  </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">quickstart</span><span>
+</span><span></span><span class="hljs-attr">spec:</span><span>
+</span><span>  </span><span class="hljs-attr">version:</span><span> </span><span style="color: rgb(0, 153, 153);">8.0</span><span style="color: rgb(0, 153, 153);">.1</span><span>
+</span><span>  </span><span class="hljs-attr">nodeSets:</span><span>
+</span><span>  </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">default</span><span>
+</span><span>    </span><span class="hljs-attr">count:</span><span> </span><span style="color: rgb(0, 153, 153);">1</span><span>
+</span><span>    </span><span class="hljs-attr">config:</span><span>
+</span><span>      </span><span class="hljs-attr">node.store.allow_mmap:</span><span> </span><span style="color: rgb(0, 153, 153);">false</span></code></pre>
+      </div><br>
+      <div class="css-xg3ulo"><span class="chakra-text css-1ro0l9m">Have this configuration in our current application.
+          The Social media clone we created in our previous blogs. and run "skaffold dev", "kubectl get pods" to check
+          the status of the Elasticsearch pod. Keep in mind though, this is not the way I like to deploy Elasticsearch.
+          So, now let's dive into my way of doing things.</span></div>
+      <div id="myway-elasticsearch-on-kubernetes" class="css-1lhsyi7">
+        <h1 class="chakra-heading css-1ouh6tr">Elasticsearch on kubernetes (My way)</h1>
+      </div><span class="chakra-text css-pf3y0x">I like to use "Statefullset" to deploy Elasticsearch without installing
+        Elastic Cloud. I create a PVC disk using the configuration file instead of letting the Elastic Cloud operator
+        create it.</span><br>
+      <ul role="list" class="css-ipfucb">
+        <li class="css-0">
+          <h2 class="chakra-heading css-bt7nv3">npm i @elastic/elasticsearch</h2>
+        </li>
+      </ul>
+      <div class="css-cxoxpm">
+        <div class="css-1syjb9w">
+          <div class="chakra-stack css-ebicsw">
+            <p class="chakra-text css-0"><button type="button" class="chakra-button css-xwy8eq">
+                <p class="chakra-text css-35hpdr">Elasticsearch.yaml</p>
+              </button></p>
+            <p class="chakra-text css-0"><button type="button" class="chakra-button css-17hj0lr">
+                <p class="chakra-text css-35hpdr">index.ts</p>
+              </button></p>
+          </div><button type="button" class="chakra-button css-jy3zbb"
+            style="position: absolute; top: 30px; right: 4px;">
+            <p class="chakra-text css-0">Copy</p>
+          </button>
+        </div>
+        <div class="css-1j327do">
+          <pre
+            style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(238, 238, 238); color: black;"><code class="language-yaml" style="white-space: pre;"><span class="hljs-attr">apiVersion:</span><span> </span><span style="color: rgb(221, 17, 68);">apps/v1</span><span>
+</span><span></span><span class="hljs-attr">kind:</span><span> </span><span style="color: rgb(221, 17, 68);">StatefulSet</span><span>
+</span><span></span><span class="hljs-attr">metadata:</span><span>
+</span><span>  </span><span class="hljs-attr">labels:</span><span>
+</span><span>    </span><span class="hljs-attr">app:</span><span> </span><span style="color: rgb(221, 17, 68);">elasticsearch</span><span>
+</span><span>    </span><span class="hljs-attr">component:</span><span> </span><span style="color: rgb(221, 17, 68);">elasticsearch</span><span>
+</span><span>    </span><span class="hljs-attr">release:</span><span> </span><span style="color: rgb(221, 17, 68);">elasticsearch</span><span>
+</span><span>  </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">elasticsearch</span><span>
+</span><span>  </span><span class="hljs-attr">namespace:</span><span> </span><span style="color: rgb(221, 17, 68);">default</span><span>
+</span><span></span><span class="hljs-attr">spec:</span><span>
+</span><span>  </span><span class="hljs-attr">podManagementPolicy:</span><span> </span><span style="color: rgb(221, 17, 68);">OrderedReady</span><span>
+</span><span>  </span><span class="hljs-attr">replicas:</span><span> </span><span style="color: rgb(0, 153, 153);">1</span><span> 
+</span><span>  </span><span class="hljs-attr">revisionHistoryLimit:</span><span> </span><span style="color: rgb(0, 153, 153);">10</span><span>
+</span><span>  </span><span class="hljs-attr">selector:</span><span>
+</span><span>    </span><span class="hljs-attr">matchLabels:</span><span>
+</span><span>      </span><span class="hljs-attr">app:</span><span> </span><span style="color: rgb(221, 17, 68);">elasticsearch</span><span>
+</span><span>      </span><span class="hljs-attr">component:</span><span> </span><span style="color: rgb(221, 17, 68);">elasticsearch</span><span>
+</span><span>      </span><span class="hljs-attr">release:</span><span> </span><span style="color: rgb(221, 17, 68);">elasticsearch</span><span>
+</span><span>  </span><span class="hljs-attr">serviceName:</span><span> </span><span style="color: rgb(221, 17, 68);">elasticsearch</span><span>
+</span><span>  </span><span class="hljs-attr">template:</span><span>
+</span><span>    </span><span class="hljs-attr">metadata:</span><span>
+</span><span>      </span><span class="hljs-attr">labels:</span><span>
+</span><span>        </span><span class="hljs-attr">app:</span><span> </span><span style="color: rgb(221, 17, 68);">elasticsearch</span><span>
+</span><span>        </span><span class="hljs-attr">component:</span><span> </span><span style="color: rgb(221, 17, 68);">elasticsearch</span><span>
+</span><span>        </span><span class="hljs-attr">release:</span><span> </span><span style="color: rgb(221, 17, 68);">elasticsearch</span><span>
+</span><span>    </span><span class="hljs-attr">spec:</span><span>
+</span><span>      </span><span class="hljs-attr">containers:</span><span>
+</span><span>      </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">env:</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">cluster.name</span><span>
+</span><span>          </span><span class="hljs-attr">value:</span><span> </span><span style="color: rgb(221, 17, 68);">es_cluster</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">discovery.type</span><span>
+</span><span>          </span><span class="hljs-attr">value:</span><span> </span><span style="color: rgb(221, 17, 68);">single-node</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">path.repo</span><span>
+</span><span>          </span><span class="hljs-attr">value:</span><span> </span><span style="color: rgb(221, 17, 68);">backup/es-backup</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">ES_JAVA_OPTS</span><span>
+</span><span>          </span><span class="hljs-attr">value:</span><span> </span><span style="color: rgb(221, 17, 68);">-Xms512m</span><span> </span><span style="color: rgb(221, 17, 68);">-Xmx512m</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">bootstrap.memory_lock</span><span>
+</span><span>          </span><span class="hljs-attr">value:</span><span> </span><span style="color: rgb(221, 17, 68);">"false"</span><span>
+</span><span>        </span><span class="hljs-attr">image:</span><span> </span><span style="color: rgb(221, 17, 68);">docker.elastic.co/elasticsearch/elasticsearch:7.11.1</span><span>
+</span><span>        </span><span class="hljs-attr">imagePullPolicy:</span><span> </span><span style="color: rgb(221, 17, 68);">IfNotPresent</span><span>
+</span><span>        </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">elasticsearch</span><span>
+</span><span>        </span><span class="hljs-attr">ports:</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">containerPort:</span><span> </span><span style="color: rgb(0, 153, 153);">9200</span><span>
+</span><span>          </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">http</span><span>
+</span><span>          </span><span class="hljs-attr">protocol:</span><span> </span><span style="color: rgb(221, 17, 68);">TCP</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">containerPort:</span><span> </span><span style="color: rgb(0, 153, 153);">9300</span><span>
+</span><span>          </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">transport</span><span>
+</span><span>          </span><span class="hljs-attr">protocol:</span><span> </span><span style="color: rgb(221, 17, 68);">TCP</span><span>
+</span><span>        </span><span class="hljs-attr">resources:</span><span>
+</span><span>          </span><span class="hljs-attr">limits:</span><span>
+</span><span>            </span><span class="hljs-attr">cpu:</span><span> </span><span style="color: rgb(221, 17, 68);">451m</span><span>
+</span><span>            </span><span class="hljs-attr">memory:</span><span> </span><span style="color: rgb(221, 17, 68);">1250Mi</span><span>
+</span><span>          </span><span class="hljs-attr">requests:</span><span>
+</span><span>            </span><span class="hljs-attr">cpu:</span><span> </span><span style="color: rgb(221, 17, 68);">250m</span><span>
+</span><span>            </span><span class="hljs-attr">memory:</span><span> </span><span style="color: rgb(221, 17, 68);">1000Mi</span><span>
+</span><span>        </span><span class="hljs-attr">securityContext:</span><span>
+</span><span>          </span><span class="hljs-attr">privileged:</span><span> </span><span style="color: rgb(0, 153, 153);">true</span><span>
+</span><span>          </span><span class="hljs-attr">runAsUser:</span><span> </span><span style="color: rgb(0, 153, 153);">1000</span><span>
+</span><span>        </span><span class="hljs-attr">terminationMessagePath:</span><span> </span><span style="color: rgb(221, 17, 68);">/dev/termination-log</span><span>
+</span><span>        </span><span class="hljs-attr">terminationMessagePolicy:</span><span> </span><span style="color: rgb(221, 17, 68);">File</span><span>
+</span><span>        </span><span class="hljs-attr">volumeMounts:</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">mountPath:</span><span> </span><span style="color: rgb(221, 17, 68);">/usr/share/elasticsearch/data</span><span>
+</span><span>          </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">elasticsearch-data</span><span>
+</span><span>      </span><span class="hljs-attr">dnsPolicy:</span><span> </span><span style="color: rgb(221, 17, 68);">ClusterFirst</span><span>
+</span><span>      </span><span class="hljs-attr">initContainers:</span><span>
+</span><span>      </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">command:</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span style="color: rgb(221, 17, 68);">sh</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span style="color: rgb(221, 17, 68);">-c</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span style="color: rgb(221, 17, 68);">chown</span><span> </span><span style="color: rgb(221, 17, 68);">-R</span><span> </span><span style="color: rgb(0, 153, 153);">1000</span><span style="color: rgb(221, 17, 68);">:1000</span><span> </span><span style="color: rgb(221, 17, 68);">/usr/share/elasticsearch/data</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span style="color: rgb(221, 17, 68);">sysctl</span><span> </span><span style="color: rgb(221, 17, 68);">-w</span><span> </span><span style="color: rgb(221, 17, 68);">vm.max_map_count=262144</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span style="color: rgb(221, 17, 68);">chmod</span><span> </span><span style="color: rgb(0, 153, 153);">777</span><span> </span><span style="color: rgb(221, 17, 68);">/usr/share/elasticsearch/data</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span style="color: rgb(221, 17, 68);">chomod</span><span> </span><span style="color: rgb(0, 153, 153);">777</span><span> </span><span style="color: rgb(221, 17, 68);">/usr/share/elasticsearch/data/node</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span style="color: rgb(221, 17, 68);">chmod</span><span> </span><span style="color: rgb(221, 17, 68);">g+rwx</span><span> </span><span style="color: rgb(221, 17, 68);">/usr/share/elasticsearch/data</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span style="color: rgb(221, 17, 68);">chgrp</span><span> </span><span style="color: rgb(0, 153, 153);">1000</span><span> </span><span style="color: rgb(221, 17, 68);">/usr/share/elasticsearch/data</span><span>
+</span><span>        </span><span class="hljs-attr">image:</span><span> </span><span style="color: rgb(221, 17, 68);">busybox:1.29.2</span><span>
+</span><span>        </span><span class="hljs-attr">imagePullPolicy:</span><span> </span><span style="color: rgb(221, 17, 68);">IfNotPresent</span><span>
+</span><span>        </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">set-dir-owner</span><span>
+</span><span>        </span><span class="hljs-attr">resources:</span><span> {}
+</span><span>        </span><span class="hljs-attr">securityContext:</span><span>
+</span><span>          </span><span class="hljs-attr">privileged:</span><span> </span><span style="color: rgb(0, 153, 153);">true</span><span>
+</span><span>        </span><span class="hljs-attr">terminationMessagePath:</span><span> </span><span style="color: rgb(221, 17, 68);">/dev/termination-log</span><span>
+</span><span>        </span><span class="hljs-attr">terminationMessagePolicy:</span><span> </span><span style="color: rgb(221, 17, 68);">File</span><span>
+</span><span>        </span><span class="hljs-attr">volumeMounts:</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">mountPath:</span><span> </span><span style="color: rgb(221, 17, 68);">/usr/share/elasticsearch/data</span><span>
+</span><span>          </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">elasticsearch-data</span><span>
+</span><span>      </span><span class="hljs-attr">restartPolicy:</span><span> </span><span style="color: rgb(221, 17, 68);">Always</span><span>
+</span><span>      </span><span class="hljs-attr">schedulerName:</span><span> </span><span style="color: rgb(221, 17, 68);">default-scheduler</span><span>
+</span><span>      </span><span class="hljs-attr">securityContext:</span><span> {}
+</span><span>      </span><span class="hljs-attr">terminationGracePeriodSeconds:</span><span> </span><span style="color: rgb(0, 153, 153);">10</span><span>
+</span><span>  </span><span class="hljs-attr">updateStrategy:</span><span>
+</span><span>    </span><span class="hljs-attr">type:</span><span> </span><span style="color: rgb(221, 17, 68);">OnDelete</span><span>
+</span><span>  </span><span class="hljs-attr">volumeClaimTemplates:</span><span>
+</span><span>  </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">metadata:</span><span>
+</span><span>      </span><span class="hljs-attr">creationTimestamp:</span><span> </span><span style="color: rgb(0, 153, 153);">null</span><span>
+</span><span>      </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">elasticsearch-data</span><span>
+</span><span>    </span><span class="hljs-attr">spec:</span><span>
+</span><span>      </span><span class="hljs-attr">accessModes:</span><span>
+</span><span>      </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span style="color: rgb(221, 17, 68);">ReadWriteOnce</span><span>
+</span><span>      </span><span class="hljs-attr">resources:</span><span>
+</span><span>        </span><span class="hljs-attr">requests:</span><span>
+</span><span>          </span><span class="hljs-attr">storage:</span><span> </span><span style="color: rgb(221, 17, 68);">10Gi</span><span>
+</span><span>      </span><span class="hljs-attr">volumeMode:</span><span> </span><span style="color: rgb(221, 17, 68);">Filesystem</span><span>
+</span>
+<span></span><span style="color: rgb(51, 68, 187);">---</span><span>
+</span><span></span><span class="hljs-attr">apiVersion:</span><span> </span><span style="color: rgb(221, 17, 68);">v1</span><span>
+</span><span></span><span class="hljs-attr">kind:</span><span> </span><span style="color: rgb(221, 17, 68);">Service</span><span>
+</span><span></span><span class="hljs-attr">metadata:</span><span>
+</span><span>  </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">eks-srv</span><span>
+</span><span></span><span class="hljs-attr">spec:</span><span>
+</span><span>  </span><span class="hljs-attr">selector:</span><span>
+</span><span>    </span><span class="hljs-attr">app:</span><span> </span><span style="color: rgb(221, 17, 68);">elasticsearch</span><span>
+</span><span>  </span><span class="hljs-attr">ports:</span><span>
+</span><span>    </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">client</span><span>
+</span><span>      </span><span class="hljs-attr">protocol:</span><span> </span><span style="color: rgb(221, 17, 68);">TCP</span><span>
+</span><span>      </span><span class="hljs-attr">port:</span><span> </span><span style="color: rgb(0, 153, 153);">9200</span><span>
+</span><span>      </span><span class="hljs-attr">targetPort:</span><span> </span><span style="color: rgb(0, 153, 153);">9200</span><span>
+</span><span>    </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">monitoring</span><span>
+</span><span>      </span><span class="hljs-attr">protocol:</span><span> </span><span style="color: rgb(221, 17, 68);">TCP</span><span>
+</span><span>      </span><span class="hljs-attr">port:</span><span> </span><span style="color: rgb(0, 153, 153);">9300</span><span>
+</span><span>      </span><span class="hljs-attr">targetPort:</span><span> </span><span style="color: rgb(0, 153, 153);">9300</span></code></pre>
+        </div>
+      </div><br><span class="chakra-text css-pf3y0x">I hope you found how to incorporate Elasticsearch into your
+        kubernetes application. Even though I did not explain anything about why I setup Elasticsearch using
+        "Statefulset" and how we did it. I would highly recommend you go through it and understand how it works. It's
+        not at all difficult to figure out that part on your own. So here's where I leave you. Sayonara!</span><br>
+      <div id="end-of-the-blog" class="css-1lhsyi7">
+        <h1 class="chakra-heading css-1ouh6tr">Bonus - Elasticsearch production configuration</h1>
+      </div><span class="chakra-text css-pf3y0x">Wait wait wait. I totally forgot about this section. So, the above
+        configuration should not be used in production or at least I recommend that you shouldn't. There is an much
+        easier way to deploy Elasticsearch in production than writing the config file. It's quite an irony that
+        Elasticsearch is easier to deploy in production than locally. Using "Helm Charts" is the best way you can do it
+        and we will discuss the best way to deploy Elasticsearch in production in this <a
+          href="https://www.google.com/search?q=production+elasticsearch+deployment+site%3Acodding.in"
+          style="text-decoration: underline;">blog</a></span><br>
+      <div class="css-1i40juj">
+        <h2 class="chakra-heading css-1dklj6k">Sayonara! See you in my next blog.</h2>
+      </div>
+    </div>
+  </div>
+  <!-- Code injected by live-server -->
+  <script type="text/javascript">
+    // <![CDATA[  <-- For SVG support
+    if ('WebSocket' in window) {
+      (function () {
+        function refreshCSS() {
+          var sheets = [].slice.call(document.getElementsByTagName("link"));
+          var head = document.getElementsByTagName("head")[0];
+          for (var i = 0; i < sheets.length; ++i) {
+            var elem = sheets[i];
+            var parent = elem.parentElement || head;
+            parent.removeChild(elem);
+            var rel = elem.rel;
+            if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+              var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+              elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+            }
+            parent.appendChild(elem);
+          }
+        }
+        var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+        var address = protocol + window.location.host + window.location.pathname + '/ws';
+        var socket = new WebSocket(address);
+        socket.onmessage = function (msg) {
+          if (msg.data == 'reload') window.location.reload();
+          else if (msg.data == 'refreshcss') refreshCSS();
+        };
+        if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+          console.log('Live reload enabled.');
+          sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+        }
+      })();
+    }
+    else {
+      console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+    }
+	// ]]>
+  </script>
+
+</body>
+
+</html>
