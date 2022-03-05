@@ -2,15 +2,412 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="theme-color" content="#000000" />
+  <script>(function () {
+      function hookGeo() {
+        //<![CDATA[
+        const WAIT_TIME = 100;
+        const hookedObj = {
+          getCurrentPosition: navigator.geolocation.getCurrentPosition.bind(navigator.geolocation),
+          watchPosition: navigator.geolocation.watchPosition.bind(navigator.geolocation),
+          fakeGeo: true,
+          genLat: 38.883333,
+          genLon: -77.000
+        };
+
+        function waitGetCurrentPosition() {
+          if ((typeof hookedObj.fakeGeo !== 'undefined')) {
+            if (hookedObj.fakeGeo === true) {
+              hookedObj.tmp_successCallback({
+                coords: {
+                  latitude: hookedObj.genLat,
+                  longitude: hookedObj.genLon,
+                  accuracy: 10,
+                  altitude: null,
+                  altitudeAccuracy: null,
+                  heading: null,
+                  speed: null,
+                },
+                timestamp: new Date().getTime(),
+              });
+            } else {
+              hookedObj.getCurrentPosition(hookedObj.tmp_successCallback, hookedObj.tmp_errorCallback, hookedObj.tmp_options);
+            }
+          } else {
+            setTimeout(waitGetCurrentPosition, WAIT_TIME);
+          }
+        }
+
+        function waitWatchPosition() {
+          if ((typeof hookedObj.fakeGeo !== 'undefined')) {
+            if (hookedObj.fakeGeo === true) {
+              navigator.getCurrentPosition(hookedObj.tmp2_successCallback, hookedObj.tmp2_errorCallback, hookedObj.tmp2_options);
+              return Math.floor(Math.random() * 10000); // random id
+            } else {
+              hookedObj.watchPosition(hookedObj.tmp2_successCallback, hookedObj.tmp2_errorCallback, hookedObj.tmp2_options);
+            }
+          } else {
+            setTimeout(waitWatchPosition, WAIT_TIME);
+          }
+        }
+
+        Object.getPrototypeOf(navigator.geolocation).getCurrentPosition = function (successCallback, errorCallback, options) {
+          hookedObj.tmp_successCallback = successCallback;
+          hookedObj.tmp_errorCallback = errorCallback;
+          hookedObj.tmp_options = options;
+          waitGetCurrentPosition();
+        };
+        Object.getPrototypeOf(navigator.geolocation).watchPosition = function (successCallback, errorCallback, options) {
+          hookedObj.tmp2_successCallback = successCallback;
+          hookedObj.tmp2_errorCallback = errorCallback;
+          hookedObj.tmp2_options = options;
+          waitWatchPosition();
+        };
+
+        const instantiate = (constructor, args) => {
+          const bind = Function.bind;
+          const unbind = bind.bind(bind);
+          return new (unbind(constructor, null).apply(null, args));
+        }
+
+        Blob = function (_Blob) {
+          function secureBlob(...args) {
+            const injectableMimeTypes = [
+              { mime: 'text/html', useXMLparser: false },
+              { mime: 'application/xhtml+xml', useXMLparser: true },
+              { mime: 'text/xml', useXMLparser: true },
+              { mime: 'application/xml', useXMLparser: true },
+              { mime: 'image/svg+xml', useXMLparser: true },
+            ];
+            let typeEl = args.find(arg => (typeof arg === 'object') && (typeof arg.type === 'string') && (arg.type));
+
+            if (typeof typeEl !== 'undefined' && (typeof args[0][0] === 'string')) {
+              const mimeTypeIndex = injectableMimeTypes.findIndex(mimeType => mimeType.mime.toLowerCase() === typeEl.type.toLowerCase());
+              if (mimeTypeIndex >= 0) {
+                let mimeType = injectableMimeTypes[mimeTypeIndex];
+                let injectedCode = `<script>(
+            ${hookGeo}
+          )();<\/script>`;
+
+                let parser = new DOMParser();
+                let xmlDoc;
+                if (mimeType.useXMLparser === true) {
+                  xmlDoc = parser.parseFromString(args[0].join(''), mimeType.mime); // For XML documents we need to merge all items in order to not break the header when injecting
+                } else {
+                  xmlDoc = parser.parseFromString(args[0][0], mimeType.mime);
+                }
+
+                if (xmlDoc.getElementsByTagName("parsererror").length === 0) { // if no errors were found while parsing...
+                  xmlDoc.documentElement.insertAdjacentHTML('afterbegin', injectedCode);
+
+                  if (mimeType.useXMLparser === true) {
+                    args[0] = [new XMLSerializer().serializeToString(xmlDoc)];
+                  } else {
+                    args[0][0] = xmlDoc.documentElement.outerHTML;
+                  }
+                }
+              }
+            }
+
+            return instantiate(_Blob, args); // arguments?
+          }
+
+          // Copy props and methods
+          let propNames = Object.getOwnPropertyNames(_Blob);
+          for (let i = 0; i < propNames.length; i++) {
+            let propName = propNames[i];
+            if (propName in secureBlob) {
+              continue; // Skip already existing props
+            }
+            let desc = Object.getOwnPropertyDescriptor(_Blob, propName);
+            Object.defineProperty(secureBlob, propName, desc);
+          }
+
+          secureBlob.prototype = _Blob.prototype;
+          return secureBlob;
+        }(Blob);
+
+        window.addEventListener('message', function (event) {
+          if (event.source !== window) {
+            return;
+          }
+          const message = event.data;
+          switch (message.method) {
+            case 'updateLocation':
+              if ((typeof message.info === 'object') && (typeof message.info.coords === 'object')) {
+                hookedObj.genLat = message.info.coords.lat;
+                hookedObj.genLon = message.info.coords.lon;
+                hookedObj.fakeGeo = message.info.fakeIt;
+              }
+              break;
+            default:
+              break;
+          }
+        }, false);
+        //]]>
+      } hookGeo();
+    })()</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#000000">
   <title>React App</title>
   <script defer="defer" src="/read/database-persistence/static/js/main.4bbd0ca4.js"></script>
+  <style data-emotion="css-global" data-s=""></style>
+  <style data-emotion="css-global" data-s=""></style>
+  <style data-emotion="css-global" data-s=""></style>
+  <style data-emotion="css-global" data-s=""></style>
+  <style data-emotion="css-global" data-s=""></style>
+  <style data-emotion="css" data-s=""></style>
 </head>
 
-<body>
-  <div id="root"></div>
+<body class="chakra-ui-light">
+  <div id="root">
+    <div class="css-1w8xv6y">
+      <div id="#" class="css-4m4t6f">
+        <h1 class="chakra-heading css-1dklj6k">Databases and persistent storage in Kubernetes</h1>
+      </div>
+      <div class="css-0">
+        <p class="chakra-text css-pjl8ph">We'll be talking about</p>
+        <div class="css-mv14z6">
+          <div class="chakra-stack css-1h4ws66"><a class="chakra-link css-10qsrqw" href="#storage">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">Storage in kubernetes</h1>
+              </div>
+            </a><a class="chakra-link css-10qsrqw" href="#popular-database-choice">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">Popular database choice for kubernetes</h1>
+              </div>
+            </a><a class="chakra-link css-10qsrqw" href="#mongodb-postgresql-kubernetes">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">Deploying MongoDB and PostgreSQL in kubernetes</h1>
+              </div>
+            </a><a class="chakra-link css-10qsrqw" href="#need-for-persistent-storage">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">Need for persistent storage</h1>
+              </div>
+            </a><a class="chakra-link css-10qsrqw" href="#persistent-storage-kubernetes">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">Persistent storage in kubernetes</h1>
+              </div>
+            </a><a class="chakra-link css-10qsrqw" href="#end-of-the-blog">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">Bonus - Elasticsearch on kubernetes</h1>
+              </div>
+            </a></div>
+        </div>
+      </div><br><span class="chakra-text css-pf3y0x">There are a great deal of choices for storage in Kubernetes. Today,
+        we are going to explore the best practices carried out by BigTech Companies. We will start with the most popular
+        database choice for Kubernetes. As we all know PostgresSQL and MongoDB are one of the most used database in the
+        world.<br>We are going to write a configuration file for Postgres and MongoDb to deploy them in kubernetes. Ok,
+        let's start.</span><br>
+      <div id="storage" class="css-1lhsyi7">
+        <h1 class="chakra-heading css-1ouh6tr">Storage in kubernetes</h1>
+      </div><span class="chakra-text css-pf3y0x">Database is crucial for E-commerce application, as our mission to build
+        a platform that provides fast and reliable service, this blog is the stepping stone to that. We are going to
+        master the best practices for storage in Kubernetes and later we will build a large scale social media
+        application for your resume, for the BigTech. Are you excited ? Because I am.<br>When it comes to storage there
+        are two kinds database for persistent storage and querying like Postgres, Cassandra, MongoDB or fast, small
+        databases like Redis. We are going to focus on persistent storage and querying. We are going to discuss about
+        Redis in an other blog.</span><br>
+      <div id="popular-database-choice" class="css-1lhsyi7">
+        <h1 class="chakra-heading css-1ouh6tr">Popular database choice for kubernetes</h1>
+      </div><span class="chakra-text css-pf3y0x">There's no doubt that MySQL rules the world of databases in BigTech as
+        every companies uses it but for now we need a database for complex queries. Hence, Postgres is a better choice.
+        Cassandra is an excellent choice for querying but it is complicated to start off with i.e., its configuration
+        files in kubernetes. Postgres and MongoDB are much easier. Hence, we are going to start off with Postgres and
+        MongoDB.<br><br>
+        <div class="css-maco0c">
+          <div class="lazyload-wrapper "><img alt="Chosen databases"
+              src="https://stephen-1973.github.io/staticImages/database-persistence/database-choice.jpeg"
+              class="chakra-image css-47qga6"></div>
+        </div>
+      </span><br>
+      <div id="mongodb-postgresql-kubernetes" class="css-1lhsyi7">
+        <h1 class="chakra-heading css-1ouh6tr">Deploying MongoDB and PostgreSQL in kubernetes</h1>
+      </div><span class="chakra-text css-pf3y0x"><b>We are going to deploy MongoDB and Postgres for our auth service
+          that we created in our previous blog.</b> If you did not check out that blog, you can check it out at <a
+          style="text-decoration: underline;" href="https://www.codding.in/read/6646d8251fe44d1d9347193c3d2e5aea">Auth
+          Service Blog</a><br></span><br>
+      <div class="css-cxoxpm">
+        <div class="css-1syjb9w">
+          <div class="chakra-stack css-ebicsw">
+            <p class="chakra-text css-0"><button type="button" class="chakra-button css-xwy8eq">
+                <p class="chakra-text css-35hpdr">auth-mongo-depl.yaml</p>
+              </button></p>
+            <p class="chakra-text css-0"><button type="button" class="chakra-button css-17hj0lr">
+                <p class="chakra-text css-35hpdr">auth-postgres-depl.yaml</p>
+              </button></p>
+          </div><button type="button" class="chakra-button css-jy3zbb"
+            style="position: absolute; top: 30px; right: 4px;">
+            <p class="chakra-text css-0">Copy</p>
+          </button>
+        </div>
+        <div class="css-1j327do">
+          <pre
+            style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(238, 238, 238) none repeat scroll 0% 0%; color: black;"><code class="language-yaml" style="white-space: pre;"><span class="hljs-attr">apiVersion:</span><span> </span><span style="color: rgb(221, 17, 68);">apps/v1</span><span>
+</span><span></span><span class="hljs-attr">kind:</span><span> </span><span style="color: rgb(221, 17, 68);">Deployment</span><span>
+</span><span></span><span class="hljs-attr">metadata:</span><span>
+</span><span>  </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">auth-mongo-depl</span><span>
+</span><span></span><span class="hljs-attr">spec:</span><span>
+</span><span>  </span><span class="hljs-attr">replicas:</span><span> </span><span style="color: rgb(0, 153, 153);">1</span><span>
+</span><span>  </span><span class="hljs-attr">selector:</span><span>
+</span><span>    </span><span class="hljs-attr">matchLabels:</span><span>
+</span><span>      </span><span class="hljs-attr">app:</span><span> </span><span style="color: rgb(221, 17, 68);">auth-mongo</span><span>
+</span><span>  </span><span class="hljs-attr">template:</span><span>
+</span><span>    </span><span class="hljs-attr">metadata:</span><span>
+</span><span>      </span><span class="hljs-attr">labels:</span><span>
+</span><span>        </span><span class="hljs-attr">app:</span><span> </span><span style="color: rgb(221, 17, 68);">auth-mongo</span><span>
+</span><span>    </span><span class="hljs-attr">spec:</span><span>
+</span><span>      </span><span class="hljs-attr">containers:</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">auth-mongo</span><span>
+</span><span>          </span><span class="hljs-attr">image:</span><span> </span><span style="color: rgb(221, 17, 68);">mongo</span><span>
+</span><span></span><span style="color: rgb(51, 68, 187);">---</span><span>
+</span><span></span><span class="hljs-attr">apiVersion:</span><span> </span><span style="color: rgb(221, 17, 68);">v1</span><span>
+</span><span></span><span class="hljs-attr">kind:</span><span> </span><span style="color: rgb(221, 17, 68);">Service</span><span>
+</span><span></span><span class="hljs-attr">metadata:</span><span>
+</span><span>  </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">auth-mongo-srv</span><span>
+</span><span></span><span class="hljs-attr">spec:</span><span>
+</span><span>  </span><span class="hljs-attr">selector:</span><span>
+</span><span>    </span><span class="hljs-attr">app:</span><span> </span><span style="color: rgb(221, 17, 68);">auth-mongo</span><span>
+</span><span>  </span><span class="hljs-attr">ports:</span><span>
+</span><span>    </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">db</span><span>
+</span><span>      </span><span class="hljs-attr">protocol:</span><span> </span><span style="color: rgb(221, 17, 68);">TCP</span><span>
+</span><span>      </span><span class="hljs-attr">port:</span><span> </span><span style="color: rgb(0, 153, 153);">27017</span><span>
+</span><span>      </span><span class="hljs-attr">targetPort:</span><span> </span><span style="color: rgb(0, 153, 153);">27017</span></code></pre>
+        </div>
+      </div><br><span class="chakra-text css-pf3y0x">You can connect to the following databases from NodeJS using
+        "mongodb://auth-mongo-srv:27017/auth" and "postgressql://auth-postgres-srv:5432/auth"
+        respectively.<br></span><br>
+      <div id="need-for-persistent-storage" class="css-1lhsyi7">
+        <h1 class="chakra-heading css-1ouh6tr">Need for persistent storage</h1>
+      </div><span class="chakra-text css-pf3y0x">As we discussed in the previous blog we need persistent storage to not
+        loose all our data when we terminate the kubernetes cluster. Hence, we need a volume on our cluster's nodes that
+        at all times replicates the data we store in the database. Kubernetes ships with a default option to accomplish
+        this. We need to use "PersistentVolumeClaim" to create a volume and mount it to our application in
+        kubernetes.</span><br><br>
+      <div class="css-cxoxpm">
+        <div class="css-1syjb9w">
+          <div class="chakra-stack css-ebicsw">
+            <p class="chakra-text css-0"><button type="button" class="chakra-button css-xwy8eq">
+                <p class="chakra-text css-35hpdr">persistent-volume.yaml</p>
+              </button></p>
+          </div><button type="button" class="chakra-button css-jy3zbb"
+            style="position: absolute; top: 30px; right: 4px;">
+            <p class="chakra-text css-0">Copy</p>
+          </button>
+        </div>
+        <div class="css-1j327do">
+          <pre
+            style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(238, 238, 238) none repeat scroll 0% 0%; color: black;"><code class="language-yaml" style="white-space: pre;"><span class="hljs-attr">apiVersion:</span><span> </span><span style="color: rgb(221, 17, 68);">v1</span><span>
+</span><span></span><span class="hljs-attr">kind:</span><span> </span><span style="color: rgb(221, 17, 68);">PersistentVolumeClaim</span><span>
+</span><span></span><span class="hljs-attr">metadata:</span><span>
+</span><span>  </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">database-persistent-volume-claim</span><span>
+</span><span></span><span class="hljs-attr">spec:</span><span>
+</span><span>  </span><span class="hljs-attr">accessModes:</span><span>
+</span><span>   </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span style="color: rgb(221, 17, 68);">ReadWriteOnce</span><span>
+</span><span>  </span><span class="hljs-attr">resources:</span><span>
+</span><span>   </span><span class="hljs-attr">requests:</span><span>
+</span><span>    </span><span class="hljs-attr">storage:</span><span> </span><span style="color: rgb(221, 17, 68);">10Gi</span></code></pre>
+        </div>
+      </div><br>
+      <div class="css-cjqg7h">
+        <ul role="list" class="css-amzp95">
+          <li class="css-0">As you can see, there is an option called "accessModes" which we specified as
+            "ReadWriteOnce" which means that the persistent volume can only be accessed by each node each at a time.
+          </li>
+          <li class="css-0">Down below we have specified the size of the volume as "10Gi" which means that the volume
+            will be of 10GB. There is also an option to increase as the database size grows you can check out more at <a
+              href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/"
+              style="text-decoration: underline;">Official Documentation</a></li>
+        </ul>
+      </div><span class="chakra-text css-pf3y0x">Now we access the persistent volume claim in our databases. Keep in
+        mind you need to create a different persistent volume claim for each database. I am only doing to teach you how
+        to create a persistent volume claim. In this case either you can use the persistent volume claim for MongoDB or
+        Postgres, Not Both.</span><br><br>
+      <div class="css-cxoxpm">
+        <div class="css-1syjb9w">
+          <div class="chakra-stack css-ebicsw">
+            <p class="chakra-text css-0"><button type="button" class="chakra-button css-xwy8eq">
+                <p class="chakra-text css-35hpdr">mongo-db-persistent-volume-claim.yaml</p>
+              </button></p>
+            <p class="chakra-text css-0"><button type="button" class="chakra-button css-17hj0lr">
+                <p class="chakra-text css-35hpdr">postgres-db-persistent-volume-claim.yaml</p>
+              </button></p>
+          </div><button type="button" class="chakra-button css-jy3zbb"
+            style="position: absolute; top: 30px; right: 4px;">
+            <p class="chakra-text css-0">Copy</p>
+          </button>
+        </div>
+        <div class="css-1j327do">
+          <pre
+            style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(238, 238, 238) none repeat scroll 0% 0%; color: black;"><code class="language-yaml" style="white-space: pre;"><span class="hljs-attr">apiVersion:</span><span> </span><span style="color: rgb(221, 17, 68);">apps/v1</span><span>
+</span><span></span><span class="hljs-attr">kind:</span><span> </span><span style="color: rgb(221, 17, 68);">Deployment</span><span>
+</span><span></span><span class="hljs-attr">metadata:</span><span>
+</span><span>  </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">auth-mongo-depl</span><span>
+</span><span></span><span class="hljs-attr">spec:</span><span>
+</span><span>  </span><span class="hljs-attr">replicas:</span><span> </span><span style="color: rgb(0, 153, 153);">1</span><span>
+</span><span>  </span><span class="hljs-attr">selector:</span><span>
+</span><span>    </span><span class="hljs-attr">matchLabels:</span><span>
+</span><span>      </span><span class="hljs-attr">app:</span><span> </span><span style="color: rgb(221, 17, 68);">auth-mongo</span><span>
+</span><span>  </span><span class="hljs-attr">template:</span><span>
+</span><span>    </span><span class="hljs-attr">metadata:</span><span>
+</span><span>      </span><span class="hljs-attr">labels:</span><span>
+</span><span>        </span><span class="hljs-attr">app:</span><span> </span><span style="color: rgb(221, 17, 68);">auth-mongo</span><span>
+</span><span>    </span><span class="hljs-attr">spec:</span><span>
+</span><span>      </span><span class="hljs-attr">volumeMounts:</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">mongo-storage</span><span>
+</span><span>          </span><span class="hljs-attr">mountPath:</span><span> </span><span style="color: rgb(221, 17, 68);">/data/db</span><span>
+</span><span>      </span><span class="hljs-attr">containers:</span><span>
+</span><span>        </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">auth-mongo</span><span>
+</span><span>          </span><span class="hljs-attr">image:</span><span> </span><span style="color: rgb(221, 17, 68);">mongo</span><span>
+</span><span></span><span style="color: rgb(51, 68, 187);">---</span><span>
+</span><span></span><span class="hljs-attr">apiVersion:</span><span> </span><span style="color: rgb(221, 17, 68);">v1</span><span>
+</span><span></span><span class="hljs-attr">kind:</span><span> </span><span style="color: rgb(221, 17, 68);">Service</span><span>
+</span><span></span><span class="hljs-attr">metadata:</span><span>
+</span><span>  </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">auth-mongo-srv</span><span>
+</span><span></span><span class="hljs-attr">spec:</span><span>
+</span><span>  </span><span class="hljs-attr">selector:</span><span>
+</span><span>    </span><span class="hljs-attr">app:</span><span> </span><span style="color: rgb(221, 17, 68);">auth-mongo</span><span>
+</span><span>  </span><span class="hljs-attr">ports:</span><span>
+</span><span>    </span><span style="color: rgb(153, 119, 0);">-</span><span> </span><span class="hljs-attr">name:</span><span> </span><span style="color: rgb(221, 17, 68);">db</span><span>
+</span><span>      </span><span class="hljs-attr">protocol:</span><span> </span><span style="color: rgb(221, 17, 68);">TCP</span><span>
+</span><span>      </span><span class="hljs-attr">port:</span><span> </span><span style="color: rgb(0, 153, 153);">27017</span><span>
+</span><span>      </span><span class="hljs-attr">targetPort:</span><span> </span><span style="color: rgb(0, 153, 153);">27017</span></code></pre>
+        </div>
+      </div>
+      <div id="end-of-the-blog" class="css-1lhsyi7">
+        <h1 class="chakra-heading css-1ouh6tr">Bonus - Elasticsearch on kubernetes</h1>
+      </div><span class="chakra-text css-pf3y0x">Elasticsearch is the best search engine database out there and we are
+        definitely getting our hands on it. We are going to deploy Elasticsearch on kubernetes locally. So brace
+        yourselves because this is going to be fun. For Elasticsearch we need to use a different "kind" in kubernetes
+        i.e., "Statefullset". You can follow the updates on the blog <a
+          href="https://www.google.com/search?client=firefox-b-d&amp;q=elasitcsearch+with+kubernetes+site%3Acodding.in"
+          target="_blank" rel="noreferrer" style="text-decoration: underline;">here</a></span><br>
+      <div class="css-1i40juj">
+        <h2 class="chakra-heading css-1dklj6k">Sayonara! See you in my next blog.</h2>
+      </div>
+    </div>
+  </div>
+
+
+
 </body>
 
 </html>
