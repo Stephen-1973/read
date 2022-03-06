@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/read/elasticsearch-with-helm/static/js/main.8cabc9a1.js",
+    "index.html": "/read/elasticsearch-with-helm/index.html",
+    "main.8cabc9a1.js.map": "/read/elasticsearch-with-helm/static/js/main.8cabc9a1.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.8cabc9a1.js"
+  ]
+}

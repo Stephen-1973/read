@@ -1,0 +1,362 @@
+<html lang="en" style="--chakra-ui-color-mode: light;" data-theme="light">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#000000">
+  <title>React App</title>
+  <script defer="defer" src="./static/js/main.8cabc9a1.js"></script>
+  <style data-emotion="css-global" data-s=""></style>
+  <style data-emotion="css-global" data-s=""></style>
+  <style data-emotion="css-global" data-s=""></style>
+  <style data-emotion="css-global" data-s=""></style>
+  <style data-emotion="css-global" data-s=""></style>
+  <style data-emotion="css" data-s=""></style>
+</head>
+
+<body class="chakra-ui-light">
+  <div id="root">
+    <div class="css-1w8xv6y">
+      <div id="#" class="css-4m4t6f">
+        <h1 class="chakra-heading css-1dklj6k">Elasticsearch production deploy with Helm</h1>
+      </div>
+      <div class="css-0">
+        <p class="chakra-text css-pjl8ph">We'll be talking about</p>
+        <div class="css-mv14z6">
+          <div class="chakra-stack css-1h4ws66"><a class="chakra-link css-10qsrqw" href="#a-brief-about-kubernetes">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">A brief about kubernetes</h1>
+              </div>
+            </a><a class="chakra-link css-10qsrqw" href="#kubernetes-cloud-hosting">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">Kubernetes cloud hosting</h1>
+              </div>
+            </a><a class="chakra-link css-10qsrqw" href="#why-helm-is-used">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">Why helm is used?</h1>
+              </div>
+            </a><a class="chakra-link css-10qsrqw" href="#install-helm">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">Setup Helm on Cluster</h1>
+              </div>
+            </a><a class="chakra-link css-10qsrqw" href="#installing-elasticsearch-with-helm">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">Installing Elasticsearch with Helm</h1>
+              </div>
+            </a><a class="chakra-link css-10qsrqw" href="#checking-the-status-of-elasticsearch">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">Checking the status of Elasticsearch</h1>
+              </div>
+            </a><a class="chakra-link css-10qsrqw" href="#a-successful-deploy-cheers">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">A successful deploy, Cheers!</h1>
+              </div>
+            </a><a class="chakra-link css-10qsrqw" href="#end-of-the-blog">
+              <div class="chakra-stack css-84zodg"><svg viewBox="0 0 24 24" focusable="false"
+                  class="chakra-icon chakra-icon css-3edp27">
+                  <path fill="currentColor" d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path>
+                </svg>
+                <h1 class="chakra-heading css-wg54d">Bonus - Where to go after this</h1>
+              </div>
+            </a></div>
+        </div>
+      </div><br>
+      <div id="a-brief-about-kubernetes" class="css-1lhsyi7">
+        <h1 class="chakra-heading css-1ouh6tr">A brief about kubernetes</h1>
+      </div><span class="chakra-text css-pf3y0x">Kubernetes is a production grade container orchestration system
+        developed by Google and open sources in mid June of 2014.<br><br>Ever since then it became the most popular
+        container orchestration system in the world. Every BigTech company started to use it. So, it is mandatory to
+        know such a popular orchestration system if you wanna Land a job in FAANG or create a robust application for
+        your company.<br><br>Kubernetes ensures that your services are running in a highly available manner. Even if a
+        major service fails, Kubernetes will take care of it and bring it back up or won't let it affect the rest of the
+        services.</span><br>
+      <div id="kubernetes-cloud-hosting" class="css-1lhsyi7">
+        <h1 class="chakra-heading css-1ouh6tr">Kubernetes cloud hosting</h1>
+      </div><span class="chakra-text css-pf3y0x">Kubernetes is a big deal even among the BigTech tech. That's why there
+        are so many big names like Google, Amazon, Microsoft, etc. that are hosting Kubernetes clusters. As far as we
+        are concerned, we will host our Kubernetes cluster on GKE (Google Kubernetes Engine).<br><br>If you search
+        "Kubernetes cloud hosting" there are more than 200k results showing up. That shows the amount of demand that
+        kubernetes has in the market. Every cluster hosting service has different set of internal rules which obstruct
+        kubernetes from performing it's job. So, how do we manage such a insane number? Well, you guessed it Helm is the
+        answer. It's a package manager which helps you to manage your Kubernetes cluster packages with ease.</span><br>
+      <div id="why-helm-is-used" class="css-1lhsyi7">
+        <h1 class="chakra-heading css-1ouh6tr">Why helm is used?</h1>
+      </div><span class="chakra-text css-pf3y0x">As our application grows in size, managing kubernetes config files
+        becomes more and more complicated. The smallest of the configuration errors can lead to the failure of your
+        application. Hence, great developers like us created Helm. Helm helps you to manage your kubernetes cluster
+        packages with ease.<ul role="list" class="css-ipfucb">
+          <li class="css-0">
+            <h2 class="chakra-heading css-bt7nv3">History of Helm</h2>
+          </li>
+        </ul>
+        <div class="css-xg3ulo"><span class="chakra-text css-1ro0l9m">Helm was orignally created by Deis and became a
+            de-facto open source for managing kubernetes packages. When the project was moved under Kubernetes in
+            Janurary 2016, Helm 2.0 was released, merging both codebases.</span></div>
+      </span><br>
+      <div id="" class="css-1lhsyi7">
+        <h1 class="chakra-heading css-1ouh6tr">Setup Helm on Cluster</h1>
+      </div><span class="chakra-text css-pf3y0x">Setting up Helm is very easy. They have a robust installing
+        documentation which makes it even more easier for us to install Helm.<br>Before we move any forward with Helm,
+        we need to check if its already installed on your system. Because most of the times, you will have Helm on your
+        system but won't know about it. You can check by running 'helm version' command in your terminal. If you can see
+        no error then it means that helm is already installed.<br><br>
+        <div class="css-maco0c">
+          <div class="lazyload-wrapper ">
+            <div class="lazyload-placeholder"></div>
+          </div>
+        </div>
+        <ul role="list" class="css-ipfucb">
+          <li class="css-0">
+            <h2 class="chakra-heading css-bt7nv3">If you are interested in how my terminal looks. You can check out my
+              blog <a href="https://www.codding.in/read/a2af1eb7d9ab4e40a2f9ea072017560d"
+                style="text-decoration: underline;">here</a> to setup a fish shell terminal.</h2>
+          </li>
+        </ul>
+      </span><br>
+      <ul role="list" class="css-ipfucb">
+        <li class="css-0">
+          <h2 class="chakra-heading css-bt7nv3">For Cluster</h2>
+        </li>
+      </ul>
+      <div class="css-bjyhaw">
+        <div class="css-nq6d8o"><button type="button" class="chakra-button css-esml50">
+            <p class="chakra-text css-1lejymi">bash</p>
+          </button><button type="button" class="chakra-button css-5zwzfk"
+            style="position: absolute; top: 4px; right: 4px;">
+            <p class="chakra-text css-0">Copy</p>
+          </button></div>
+        <pre
+          style="display: block; overflow-x: auto; padding: 0.5em; background-color: rgb(238, 238, 238); color: black;"><code class="language-bash" style="white-space: pre;"><span>curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+</span>chmod 700 get_helm.sh
+./get_helm.sh
+</code></pre>
+      </div>
+      <ul role="list" class="css-ipfucb">
+        <li class="css-0">
+          <h2 class="chakra-heading css-bt7nv3">For MacOS (Local)</h2>
+        </li>
+      </ul>
+      <div class="css-bjyhaw">
+        <div class="css-nq6d8o"><button type="button" class="chakra-button css-esml50">
+            <p class="chakra-text css-1lejymi">bash</p>
+          </button><button type="button" class="chakra-button css-5zwzfk"
+            style="position: absolute; top: 4px; right: 4px;">
+            <p class="chakra-text css-0">Copy</p>
+          </button></div>
+        <pre
+          style="display: block; overflow-x: auto; padding: 0.5em; background-color: rgb(238, 238, 238); color: black;"><code class="language-bash" style="white-space: pre;"><span>brew install helm</span></code></pre>
+      </div>
+      <ul role="list" class="css-ipfucb">
+        <li class="css-0">
+          <h2 class="chakra-heading css-bt7nv3">For Windows (Local)</h2>
+        </li>
+      </ul>
+      <div class="css-bjyhaw">
+        <div class="css-nq6d8o"><button type="button" class="chakra-button css-esml50">
+            <p class="chakra-text css-1lejymi">bash</p>
+          </button><button type="button" class="chakra-button css-5zwzfk"
+            style="position: absolute; top: 4px; right: 4px;">
+            <p class="chakra-text css-0">Copy</p>
+          </button></div>
+        <pre
+          style="display: block; overflow-x: auto; padding: 0.5em; background-color: rgb(238, 238, 238); color: black;"><code class="language-bash" style="white-space: pre;"><span>choco install helm</span></code></pre>
+      </div>
+      <ul role="list" class="css-ipfucb">
+        <li class="css-0">
+          <h2 class="chakra-heading css-bt7nv3">Ubuntu/Debian (Using Apt)</h2>
+        </li>
+      </ul>
+      <div class="css-bjyhaw">
+        <div class="css-nq6d8o"><button type="button" class="chakra-button css-esml50">
+            <p class="chakra-text css-1lejymi">bash</p>
+          </button><button type="button" class="chakra-button css-5zwzfk"
+            style="position: absolute; top: 4px; right: 4px;">
+            <p class="chakra-text css-0">Copy</p>
+          </button></div>
+        <pre
+          style="display: block; overflow-x: auto; padding: 0.5em; background-color: rgb(238, 238, 238); color: black;"><code class="language-bash" style="white-space: pre;"><span>curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+</span>sudo apt-get install apt-transport-https --yes
+<span></span><span class="hljs-built_in">echo</span><span> </span><span style="color: rgb(221, 17, 68);">"deb https://baltocdn.com/helm/stable/debian/ all main"</span><span> | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+</span>sudo apt-get update
+sudo apt-get install helm
+</code></pre>
+      </div>
+      <div id="installing-elasticsearch-with-helm" class="css-1lhsyi7">
+        <h1 class="chakra-heading css-1ouh6tr">Installing Elasticsearch with Helm</h1>
+      </div><span class="chakra-text css-pf3y0x">We are going to install Elasticsearch with Helm Charts. The official
+        helm charts for Elasticsearch, Kibana are available on elastic official github page. Our job now is to install
+        clone helm charts into our cluster or local machine to install Elasticsearch using Helm.<ul role="list"
+          class="css-ipfucb">
+          <li class="css-0">
+            <h2 class="chakra-heading css-bt7nv3">Clone the Helm Charts</h2>
+          </li>
+        </ul>
+        <div class="css-bjyhaw">
+          <div class="css-nq6d8o"><button type="button" class="chakra-button css-esml50">
+              <p class="chakra-text css-1lejymi">bash</p>
+            </button><button type="button" class="chakra-button css-5zwzfk"
+              style="position: absolute; top: 4px; right: 4px;">
+              <p class="chakra-text css-0">Copy</p>
+            </button></div>
+          <pre
+            style="display: block; overflow-x: auto; padding: 0.5em; background-color: rgb(238, 238, 238); color: black;"><code class="language-bash" style="white-space: pre;"><span>git </span><span class="hljs-built_in">clone</span><span> https://github.com/elastic/helm-charts.git</span></code></pre>
+        </div><br>
+        <p>Now that we have the helm charts cloned, we can start installing Elasticsearch and Kibana. This might get
+          complicated because you are not going to understand what exactly we are doing here but stay with me and you
+          will be fine.</p><br>
+        <h1 class="chakra-heading css-qpyj5c">How to install elasticsearch</h1>
+        <div class="css-cjqg7h">
+          <ul role="list" class="css-amzp95">
+            <li class="css-0">Clone official helm charts from Elastic repository</li>
+            <li class="css-0">cd into the helm_charts directory</li>
+            <li class="css-0">helm install folder_name chart_name</li>
+            <li class="css-0">Check the status of the pods using 'kubectl get pods'</li>
+          </ul>
+        </div>
+        <ul role="list" class="css-ipfucb">
+          <li class="css-0">
+            <h2 class="chakra-heading css-bt7nv3">Install Elasticsearch</h2>
+          </li>
+        </ul>
+        <div class="css-bjyhaw">
+          <div class="css-nq6d8o"><button type="button" class="chakra-button css-esml50">
+              <p class="chakra-text css-1lejymi">bash</p>
+            </button><button type="button" class="chakra-button css-5zwzfk"
+              style="position: absolute; top: 4px; right: 4px;">
+              <p class="chakra-text css-0">Copy</p>
+            </button></div>
+          <pre
+            style="display: block; overflow-x: auto; padding: 0.5em; background-color: rgb(238, 238, 238); color: black;"><code class="language-bash" style="white-space: pre;"><span class="hljs-built_in">cd</span><span> helm_charts
+</span>helm install elasticsearch elasticsearch
+kubectl get pods
+</code></pre>
+        </div><br>
+        <p>If you do not yet see the elasticsearch pod, it means that the service is not yet setup. You can check the
+          status after sometime.</p>
+        <ul role="list" class="css-ipfucb">
+          <li class="css-0">
+            <h2 class="chakra-heading css-bt7nv3">Install Kibana</h2>
+          </li>
+        </ul>
+        <div class="css-bjyhaw">
+          <div class="css-nq6d8o"><button type="button" class="chakra-button css-esml50">
+              <p class="chakra-text css-1lejymi">bash</p>
+            </button><button type="button" class="chakra-button css-5zwzfk"
+              style="position: absolute; top: 4px; right: 4px;">
+              <p class="chakra-text css-0">Copy</p>
+            </button></div>
+          <pre
+            style="display: block; overflow-x: auto; padding: 0.5em; background-color: rgb(238, 238, 238); color: black;"><code class="language-bash" style="white-space: pre;"><span class="hljs-built_in">cd</span><span> helm_charts
+</span>helm install kibana kibana
+kubectl get pods
+</code></pre>
+        </div>
+        <ul role="list" class="css-ipfucb">
+          <li class="css-0">
+            <h2 class="chakra-heading css-bt7nv3">Install filebeat</h2>
+          </li>
+        </ul>
+        <div class="css-bjyhaw">
+          <div class="css-nq6d8o"><button type="button" class="chakra-button css-esml50">
+              <p class="chakra-text css-1lejymi">bash</p>
+            </button><button type="button" class="chakra-button css-5zwzfk"
+              style="position: absolute; top: 4px; right: 4px;">
+              <p class="chakra-text css-0">Copy</p>
+            </button></div>
+          <pre
+            style="display: block; overflow-x: auto; padding: 0.5em; background-color: rgb(238, 238, 238); color: black;"><code class="language-bash" style="white-space: pre;"><span class="hljs-built_in">cd</span><span> helm_charts
+</span>helm install filebeat filebeat
+kubectl get pods
+</code></pre>
+        </div>
+      </span><br>
+      <div id="checking-the-status-of-elasticsearch" class="css-1lhsyi7">
+        <h1 class="chakra-heading css-1ouh6tr">Health Check - Visit Elastic Dashboard (Kibana UI)</h1>
+      </div><span class="chakra-text css-pf3y0x">
+        <p>If you are using a cluster then to visit kibana, you can go to <b>cluster_url:5601/app/kibana.</b></p>
+        <p>The same goes for local machine. You can visit kibana by going to
+          <b>http://&lt;microserviceApp&gt;:5601/app/kibana.</b>
+        </p>
+      </span><br>
+      <div id="a-successful-deploy-cheers" class="css-1lhsyi7">
+        <h1 class="chakra-heading css-1ouh6tr">A successful deploy, Cheers!!</h1>
+      </div><span class="chakra-text css-pf3y0x">
+        <p>If you are here then that means that you have successfully deployed Elasticsearch and Kibana with Helm. You
+          can now use the Elasticsearch and Kibana to perform your data analytics. You can also use the filebeat to
+          monitor your application logs. Congratsss!!! We are now ready to go on and create a BigData website. You will
+          be able to standout your application when you go to BigTech Job interview.</p>
+      </span><br>
+      <div id="end-of-the-blog" class="css-1lhsyi7">
+        <h1 class="chakra-heading css-1ouh6tr">Bonus - Where to go after this</h1>
+      </div><span class="chakra-text css-pf3y0x">If you are really into Elasticsearch then stay tuned because I am going
+        to launch a new blog series of creating a search engine. Not as powerful as Bing, but still powerful with the
+        use to Elasticsearch. We will be using Python - Artificial Intelligence, Ranking using Markov Model
+        (Unsupervised MachineLearning), Elasticsearch - Indexing, NodeJS - Putting it all together.</span><br>
+      <div class="css-1i40juj">
+        <h2 class="chakra-heading css-1dklj6k">Sayonara! See you in my next blog.</h2>
+      </div>
+    </div>
+  </div>
+  <!-- Code injected by live-server -->
+  <script type="text/javascript">
+    // <![CDATA[  <-- For SVG support
+    if ('WebSocket' in window) {
+      (function () {
+        function refreshCSS() {
+          var sheets = [].slice.call(document.getElementsByTagName("link"));
+          var head = document.getElementsByTagName("head")[0];
+          for (var i = 0; i < sheets.length; ++i) {
+            var elem = sheets[i];
+            var parent = elem.parentElement || head;
+            parent.removeChild(elem);
+            var rel = elem.rel;
+            if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+              var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+              elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+            }
+            parent.appendChild(elem);
+          }
+        }
+        var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+        var address = protocol + window.location.host + window.location.pathname + '/ws';
+        var socket = new WebSocket(address);
+        socket.onmessage = function (msg) {
+          if (msg.data == 'reload') window.location.reload();
+          else if (msg.data == 'refreshcss') refreshCSS();
+        };
+        if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+          console.log('Live reload enabled.');
+          sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+        }
+      })();
+    }
+    else {
+      console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+    }
+	// ]]>
+  </script>
+
+</body>
+
+</html>
